@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Face Verification</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      text-align: center;
+      width: 350px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input[type="file"] {
+      margin: 10px 0;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+    }
+
+    button {
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #357ab8;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #3776ab;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Завантажте два фото для порівняння</h2>
+    <form id="form" enctype="multipart/form-data">
+      <input type="file" name="photo1" required><br>
+      <input type="file" name="photo2" required><br>
+      <button type="submit">Перевірити</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    document.getElementById("form").onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const res = await fetch("/verify", { method: "POST", body: formData });
+      const data = await res.json();
+      document.getElementById("result").innerText =
+        data.verified ? "Це одна й та сама людина. Схожість: " + data.similarity
+                      : "Це різні люди. Схожість: " + data.similarity;
+    };
+  </script>
+</body>
+</html>
