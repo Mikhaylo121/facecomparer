@@ -1,92 +1,145 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Face Verification</title>
-  <style>
-    body {
-      font-family: "Segoe UI", Tahoma, sans-serif;
-      background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+    <meta charset="UTF-8">
+    <title>Face Comparison</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .container {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      text-align: center;
-      width: 350px;
-      animation: fadeIn 1s ease-in-out;
-    }
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            text-align: center;
+            width: 350px;
+            animation: fadeIn 0.8s ease-in-out;
+        }
 
-    h2 {
-      margin-bottom: 20px;
-      color: #333;
-    }
+        h2 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
 
-    input[type="file"] {
-      margin: 10px 0;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 100%;
-    }
+        input[type="file"] {
+            display: block;
+            margin: 1rem auto;
+            padding: 0.5rem;
+            border: 2px dashed #aaa;
+            border-radius: 8px;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
 
-    button {
-      background: #4a90e2;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background 0.3s ease;
-    }
+        input[type="file"]:hover {
+            border-color: #74ebd5;
+        }
 
-    button:hover {
-      background: #357ab8;
-    }
+        button {
+            background: #74ebd5;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
 
-    #result {
-      margin-top: 20px;
-      font-weight: bold;
-      color: #3776ab;
-    }
+        button:hover {
+            background: #4bb3a7;
+            transform: scale(1.05);
+        }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+        #result {
+            margin-top: 1.5rem;
+        }
+
+        .same {
+            color: #2e7d32;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .different {
+            color: #c62828;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .similarity {
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Завантажте два фото для порівняння</h2>
-    <form id="form" enctype="multipart/form-data">
-      <input type="file" name="photo1" required><br>
-      <input type="file" name="photo2" required><br>
-      <button type="submit">Перевірити</button>
-    </form>
+    <div class="container">
+        <h2>Compare Two Faces</h2>
+        <form id="verifyForm" enctype="multipart/form-data">
+            <input type="file" id="file1" name="file1" accept="image/*" required>
+            <input type="file" id="file2" name="file2" accept="image/*" required>
+            <button type="submit">Compare</button>
+        </form>
+        <div id="result"></div>
+    </div>
 
-    <div id="result"></div>
-  </div>
+    <script>
+        document.getElementById("verifyForm").onsubmit = async function(event) {
+            event.preventDefault();
 
-  <script>
-    document.getElementById("form").onsubmit = async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const res = await fetch("/verify", { method: "POST", body: formData });
-      const data = await res.json();
-      document.getElementById("result").innerText =
-        data.verified ? "Це одна й та сама людина. Схожість: " + data.similarity
-                      : "Це різні люди. Схожість: " + data.similarity;
-    };
-  </script>
+            const formData = new FormData();
+            formData.append("file1", document.getElementById("file1").files[0]);
+            formData.append("file2", document.getElementById("file2").files[0]);
+
+            try {
+                const response = await fetch("/verify", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+                const resultDiv = document.getElementById("result");
+
+                // Clear previous result
+                resultDiv.innerHTML = "";
+
+                // Create main message
+                const message = document.createElement("div");
+                message.className = result.message.includes("Same") ? "same" : "different";
+                message.textContent = result.message;
+
+                // Create similarity score
+                const similarity = document.createElement("div");
+                similarity.className = "similarity";
+                if (result.similarity !== undefined) {
+                    similarity.textContent = "Similarity score: " + result.similarity.toFixed(2);
+                }
+
+                resultDiv.appendChild(message);
+                resultDiv.appendChild(similarity);
+
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("result").innerHTML = "<div class='different'>Request failed.</div>";
+            }
+        };
+    </script>
 </body>
 </html>
