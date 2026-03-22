@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, jsonify
-from deepface import DeepFace
+import face_recognition
 
 app = Flask(__name__)
 
@@ -12,11 +12,17 @@ def verify_faces():
     photo1 = request.files["photo1"]
     photo2 = request.files["photo2"]
 
-    result = DeepFace.verify(photo1, photo2)
+    img1 = face_recognition.load_image_file(photo1)
+    img2 = face_recognition.load_image_file(photo2)
 
-    similarity = (1 - result["distance"]) * 100
+    enc1 = face_recognition.face_encodings(img1)[0]
+    enc2 = face_recognition.face_encodings(img2)[0]
+
+    distance = face_recognition.face_distance([enc1], enc2)[0]
+    similarity = (1 - distance) * 100
+
     return jsonify({
-        "verified": result["verified"],
+        "verified": distance < 0.6,
         "similarity": f"{similarity:.2f}%"
     })
 
