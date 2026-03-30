@@ -1,3 +1,4 @@
+# Python module for OpenCV with Flask for building web applications
 import cv2
 import numpy as np
 import os
@@ -12,6 +13,17 @@ orb = cv2.ORB_create()
 @app.route("/")
 def home():
     return render_template("index.html")
+
+# COUNTER
+# Keep a set of unique IPs
+unique_ips = set()
+
+@app.route("/visit", methods=["POST"])
+def visit():
+    visitor_ip = request.remote_addr
+    unique_ips.add(visitor_ip)
+    count = len(unique_ips)
+    return jsonify({"unique_visitors": count})
 
 @app.route("/verify", methods=["POST"])
 def verify():
@@ -37,7 +49,6 @@ def verify():
         if img1 is None or img2 is None:
             return jsonify({"status": "error", "message": "Invalid image(s)"}), 400
 
-        # Detect ORB keypoints and descriptors
         kp1, des1 = orb.detectAndCompute(img1, None)
         kp2, des2 = orb.detectAndCompute(img2, None)
 
@@ -55,7 +66,7 @@ def verify():
         if path1 and os.path.exists(path1): os.remove(path1)
         if path2 and os.path.exists(path2): os.remove(path2)
 
-        if similarity > 0.3:  # threshold, tune as needed
+        if similarity > 0.3: 
             return jsonify({"status": "success", "message": "Same person", "similarity": float(similarity)})
         else:
             return jsonify({"status": "fail", "message": "Different person", "similarity": float(similarity)})

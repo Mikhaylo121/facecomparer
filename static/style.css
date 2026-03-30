@@ -11,7 +11,7 @@ body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; margin: 0; 
         background-position: center center, left top, right bottom, left bottom, right top;
         background-size: cover, 250px 250px, 250px 250px, 250px 250px, 250px 250px;
         background-repeat: no-repeat;
-/* Blend them together */
+        /* Blend them together */
         background-blend-mode: overlay;
 }
 
@@ -86,4 +86,46 @@ body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; margin: 0; 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        #verifyForm input[type="file"] {
+            display: block;
+            width: 100%;
+            margin-bottom: 1rem; /* adds space between file1 and file2 */
+             padding: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .file-row {
+            display: flex;
+            gap: 1rem;              /* space between file1 and file2 */
+            flex-wrap: wrap;        /* allows wrapping on small screens */
+        }
+
+        .file-box {
+    flex: 1;                /* each takes equal width */
+    min-width: 150px;       /* ensures they don’t shrink too small */
+        }
+
+        .file-box label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .file-box input[type="file"] {
+            width: 100%;
+            padding: 0.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;          /* larger text */
+            font-weight: bold;        /* thicker weight */
+            text-align: center;       /* centered for focus */
+            color: #2c3e50;           /* darker, professional tone */
+             margin-bottom: 1.5rem;    /* space below */
+            text-transform: uppercase;/* optional: all caps */
+            letter-spacing: 2px;      /* adds spacing between letters */
+            border-bottom: 3px solid #3498db; /* highlight line under heading */
+            padding-bottom: 0.5rem;
         }

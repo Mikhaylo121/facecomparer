@@ -7,14 +7,25 @@
 </head>
 <body>
     <div class="container">
-        <h2>Compare Two Faces</h2>
-        <form id="verifyForm" enctype="multipart/form-data">
-            <input type="file" id="file1" name="file1" accept="image/*" required>
-            <input type="file" id="file2" name="file2" accept="image/*" required>
-            <button type="submit">Compare</button>
-        </form>
-        <div id="result"></div>
+         <h2>Compare Two Faces</h2>
+            <form id="verifyForm" enctype="multipart/form-data">
+                <div class="file-row">
+                    <div class="file-box">
+                        <label for="file1">Upload First Face</label>
+                        <input type="file" id="file1" name="file1" accept="image/*" required>
+                    </div>
+                </br>
+                    <div class="file-box">
+                        <label for="file2">Upload Second Face</label>
+                        <input type="file" id="file2" name="file2" accept="image/*" required>
+                     </div>
+                </div>
+                    <button type="submit" onclick="countVisit()">Compare</button>
+            </form>
+    <div id="result"></div>
+         <p id="counter">Unique visitors: 0</p>
     </div>
+
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

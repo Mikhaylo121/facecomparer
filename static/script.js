@@ -37,3 +37,10 @@
                 document.getElementById("result").innerHTML = "<div class='different'>Request failed.</div>";
             }
         };
+
+         async function countVisit() {
+            const response = await fetch("/visit", { method: "POST" });
+            const data = await response.json();
+            document.getElementById("counter").innerText =
+                "Unique visitors: " + data.unique_visitors;
+        }
