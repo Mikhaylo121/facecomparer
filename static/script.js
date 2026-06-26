@@ -26,7 +26,7 @@
                 const similarity = document.createElement("div");
                 similarity.className = "similarity";
                 if (result.similarity !== undefined) {
-                    similarity.textContent = "Similarity score: " + result.similarity.toFixed(2);
+                    similarity.textContent = "Similarity: " + result.similarity.toFixed(2)*100 + "%";
                 }
 
                 resultDiv.appendChild(message);

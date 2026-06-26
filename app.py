@@ -1,7 +1,7 @@
 # Python module for OpenCV with Flask for building web applications
 import cv2
 import numpy as np
-import os
+import json, os
 from flask import Flask, request, jsonify, render_template
 from uuid import uuid4
 
@@ -18,12 +18,19 @@ def home():
 # Keep a set of unique IPs
 unique_ips = set()
 
+# Load existing IPs from file
+if os.path.exists("visitors.json"):
+    with open("visitors.json", "r") as f:
+        unique_ips = set(json.load(f))
+
 @app.route("/visit", methods=["POST"])
 def visit():
     visitor_ip = request.remote_addr
     unique_ips.add(visitor_ip)
-    count = len(unique_ips)
-    return jsonify({"unique_visitors": count})
+    # Save updated set
+    with open("visitors.json", "w") as f:
+        json.dump(list(unique_ips), f)
+    return jsonify({"unique_visitors": len(unique_ips)})
 
 @app.route("/verify", methods=["POST"])
 def verify():
